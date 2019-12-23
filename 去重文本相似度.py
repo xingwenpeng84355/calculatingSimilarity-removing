@@ -30,7 +30,8 @@ def cal_sim(text_num,data_0,tfidf,corpus):
     for i in range(len(x)):
         if (x[i][1] > 0.8):
             sim_list.append(x[i][0])
-    print("第%s篇文章相似度已完成" % (text_num+1))
+    print("第%s篇文章相似度已完成!" % (text_num+1))
+
     return sim_list
 
 
