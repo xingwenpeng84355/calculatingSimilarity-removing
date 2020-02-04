@@ -6,7 +6,7 @@
 
 import jieba
 from gensim import corpora,models,similarities
-import multiprocessing as mp
+import multiprocessing as mp。#模块允许程序员充分利用机器上的多个核心
 
 
    # print("1")
@@ -18,7 +18,7 @@ import multiprocessing as mp
 def cal_sim(text_num,data_0,tfidf,corpus):
     doc_test=data_0[text_num] #需要对比的文章
     doc_test_list = [word for word in jieba.cut(doc_test)] #将需要对比的文章破开
-    doc_test_vec = dictionary.doc2bow(doc_test_list)
+    doc_test_vec = dictionary.doc2bow(doc_test_list)#将需要对比的文章转换成向量
 
     index = similarities.SparseMatrixSimilarity(tfidf[corpus], num_features=len(dictionary.keys()))
 
@@ -49,11 +49,11 @@ def cal(c,n, data_0,tfidf,corpus,mydict,lock):
   
 def threading(n,data_0,tfidf,corpus):
 
- pool = mp.Pool() 
+ pool = mp.Pool() #Pool 类表示一个工作进程池
 
  mg=mp.Manager()
  mydict = mg.dict()
- lock=mg.Lock()
+ lock=mg.Lock()。#一旦一个进程或者线程拿到了锁，后续的任何其他进程或线程的其他请求都会被阻塞直到锁被释放。任何进程或线程都可以释放锁。
  for i in range(1,33):
        pool.apply_async(cal, (i,n,data_0,tfidf,corpus,mydict,lock))
  pool.close()
@@ -65,7 +65,7 @@ if __name__ == '__main__':
   
  path0 = "2009-2012.txt"
  fh = open(path0, encoding='utf-8')   # 要检测文章的路径
- data = fh.read()   # 打开文章
+ data = fh.read()   # 打开文章 读取整个文件，将文件内容放到一个字符串变量中。
  data_0 = data.split("文章编号")   # 文章破开
 
  all_doc = data_0
@@ -76,14 +76,14 @@ if __name__ == '__main__':
     
  sim_dict = {}
  
- n=len(data_0)
+ n=len(data_0) #文章数
  print(n)
  dictionary = corpora.Dictionary(all_doc_list) #所有破开的文章加入字典
 
- corpus = [dictionary.doc2bow(doc) for doc in all_doc_list] 
+ corpus = [dictionary.doc2bow(doc) for doc in all_doc_list] ##该函数只计算每个不同单词的出现次数，将单词转换为整数单词id，并将结果作为稀疏向量返回
  tfidf = models.TfidfModel(corpus)
     
- sim_dict=threading(n,data_0,tfidf,corpus)
+ sim_dict=threading(n,data_0,tfidf,corpus) # 文章数。破开后的文章，模型，稀疏向量
  
  import numpy as np
  results = list(np.arange(len(data_0)))
