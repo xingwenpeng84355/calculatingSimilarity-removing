@@ -6,7 +6,7 @@
 
 import jieba
 from gensim import corpora,models,similarities
-import multiprocessing as mp。#模块允许程序员充分利用机器上的多个核心
+import multiprocessing as mp。#模块 允许 程序员 充分 利用 机器上 的 多个核心
 
 
    # print("1")
@@ -53,12 +53,52 @@ def threading(n,data_0,tfidf,corpus):
 
  mg=mp.Manager()
  mydict = mg.dict()
- lock=mg.Lock()。#一旦一个进程或者线程拿到了锁，后续的任何其他进程或线程的其他请求都会被阻塞直到锁被释放。任何进程或线程都可以释放锁。
+ status=[]
+ lock=mg.Lock() #一旦一个进程或者线程拿到了锁，后续的任何其他进程或线程的其他请求都会被阻塞直到锁被释放。任何进程或线程都可以释放锁。
  for i in range(1,33):
        pool.apply_async(cal, (i,n,data_0,tfidf,corpus,mydict,lock))
+ 
  pool.close()
  pool.join()
  return mydict   
+
+
+def threading2():
+
+   pool = mp.Pool() #Pool 类表示一个工作进程池
+   mg=mp.Manager()
+   mydict = mg.dict()
+   status = mg.dict()
+   lock=mg.Lock() #一旦一个进程或者线程拿到了锁，后续的任何其他进程或线程的其他请求都会被阻塞直到锁被释放。任何进程或线程都可以释放锁。
+   while(1):
+     for row in mydict:
+       if row==null:
+         status.append(row.index())
+       if status.nrow==0: 
+          pool.close()
+          pool.join()
+          return mydict 
+      for i in range(1,33):
+         result=pool.apply_async(cal2, (i,n,status,data_0,tfidf,corpus,mydict,lock,status))
+         
+def cal2(c,n, data_0,tfidf,corpus,mydict,lock,status): 
+
+  print('%s线程开始'%c)
+  if status.nrow<32:
+    for i in range(32):
+      status.remove(i)
+      sim_list = cal_sim(status[i],data_0,tfidf,corpus)
+      mydict[i] = mydict.get(i, []) + sim_list
+   
+  for i in range(status.nrow/32*(n-1),status.nrow/32*(n)):#    
+    lock.acquire() 
+    status.remove(i)
+    lock.release() 
+    sim_list = cal_sim(status[i],data_0,tfidf,corpus)
+    lock.acquire()
+    mydict[i] = mydict.get(i, []) + sim_list
+    lock.release()
+
 
 
 if __name__ == '__main__':
