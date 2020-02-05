@@ -68,9 +68,10 @@ def threading2():
    pool = mp.Pool() #Pool 类表示一个工作进程池
    mg=mp.Manager()
    mydict = mg.dict()
-   status = mg.dict()
+   
    lock=mg.Lock() #一旦一个进程或者线程拿到了锁，后续的任何其他进程或线程的其他请求都会被阻塞直到锁被释放。任何进程或线程都可以释放锁。
    while(1):
+     status = mg.dict()
      for row in mydict:
        if row==null:
          status.append(row.index())
@@ -78,18 +79,15 @@ def threading2():
           pool.close()
           pool.join()
           return mydict 
-      for i in range(1,33):
+      if status.nrow<32:
+          ncore=status.nrow
+      else   ncore=33
+      for i in range(1,ncore):
          result=pool.apply_async(cal2, (i,n,status,data_0,tfidf,corpus,mydict,lock,status))
          
 def cal2(c,n, data_0,tfidf,corpus,mydict,lock,status): 
 
   print('%s线程开始'%c)
-  if status.nrow<32:
-    for i in range(32):
-      status.remove(i)
-      sim_list = cal_sim(status[i],data_0,tfidf,corpus)
-      mydict[i] = mydict.get(i, []) + sim_list
-   
   for i in range(status.nrow/32*(n-1),status.nrow/32*(n)):#    
     lock.acquire() 
     status.remove(i)
