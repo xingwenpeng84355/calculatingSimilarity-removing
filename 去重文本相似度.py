@@ -40,7 +40,7 @@ def cal(c,n, data_0,tfidf,corpus,mydict,lock):
 
   print('%s线程开始'%c)
 
-  for i in range(int(n/8*(c-1)),int(n/8*c)):
+  for i in range(int(n/32*(c-1)),int(n/32*c)):
  
     sim_list = cal_sim(i,data_0,tfidf,corpus)
     lock.acquire()
